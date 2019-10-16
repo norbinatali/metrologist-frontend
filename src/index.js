@@ -1,18 +1,16 @@
-import React from 'react'
-import ReactDOM from 'react-dom'
-import '../src/styles/index.css'
-import App from '../src/components/App'
-import { ApolloProvider } from 'react-apollo'
-import ApolloClient from 'apollo-boost'
+const { GraphQLServer } = require('graphql-yoga')
 
-const client = new ApolloClient({
-  uri: 'http://localhost:4000',
-})
+const typeDefs = `
+  type Query {
+    hello(name: String): String
+  }
+`
 
-//Apollo Client
-ReactDOM.render(
-  <ApolloProvider client={client}>
-    <App />
-  </ApolloProvider>,
-  document.getElementById('root'),
-)
+const resolvers = {
+  Query: {
+    hello: (_, args) => `Hello ${args.name || 'World'}!`,
+  },
+}
+
+const server = new GraphQLServer({ typeDefs, resolvers })
+server.start(() => console.log(`Server is running at http://localhost:4000`))
